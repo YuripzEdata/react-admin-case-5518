@@ -1,46 +1,97 @@
-# Getting Started with Create React App
+**What you were expecting:**
+as described  by documentation, the simplest React App was prepared:
+*App.tsx*
+```
+    return (
+        <Admin dataProvider={dataProvider} dashboard={Dashboard} title={'Dashboard'}>
+            <Resource  name="MessageDirections" list={MessageDirections}>
+            </Resource>
+        </Admin>
+  );
+```
+*MessageDirections.tsx*
+```
+export const  MessageDirections = (props: any) => {
+    return (
+            <List aside={<Aside />} { ...props } title={"Datagrid"} perPage={5} >
+                <Datagrid>
+                    <NumberField source="id" />
+                    <DateField source="Last_Update_Dt" />
+                    <TextField source="Msgdirection_Cod" />
+                    <TextField source="Msgdirection_Desc" />
+                    <NumberField source="Num_Thread" />
+                </Datagrid>
+            </List>
+        );
+};
+```
+Component *<Aside/>* was used for additional checking data response from  Data Provider ( via console.log ) :
+```
+const Aside = () => {
+    const { data, ids } = useListContext();
+    console.log( "useListContext()=data: ", data);
+    console.log( "useListContext()=ids: ", ids.length);
+. . .
+};
+```
+**What happened instead:**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![изображение](https://user-images.githubusercontent.com/74334172/98886231-af58c900-24a4-11eb-987d-5377bc441ffd.png)
 
-## Available Scripts
 
-In the project directory, you can run:
+**Steps to reproduce:**
+<!--  Please explain the steps required to duplicate the issue, especially if you are able to provide a sample application. -->
 
-### `yarn start`
+**Related code:**
+<!-- If you are able to illustrate the bug or feature request with an example, please provide a sample application via one of the following means: -->
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* Preferably, a CodeSandbox forked from https://codesandbox.io/s/github/marmelab/react-admin/tree/master/examples/simple
+* A link to a GitHub repo with the minimal codebase to reproduce the issue
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `yarn test`
+```
+dataProvider.getList('MessageDirections',
+        { pagination: { page: 1, perPage: 5 },
+                  sort: { field: 'Msgdirection_Cod', order: 'ASC' },
+                  filter: { msgdirection_cod: 'ONLINE' }
+            }
+        )
+        .then(  response => {
+                    console.log("response.data isArray=", Array.isArray(response.data) );
+                    console.log(response.data);
+                     console.log("response");
+                    validateResponseFormat(response, 'getList');
+                if ( Array.isArray(response.data) )
+                    console.log( 'data.length=', response.data.length);
+                }
+             );
+```
+Data Provider getList return *Json* : Array of 5 oblects, browser console show its.
+```
+response.data isArray= true 
+(5) […]
+​
+0: Object { Long_Retry_Count: 0, Num_Helpers_Thread: 0, Wsdl_Name: "http://center.tgrad:80/DatumNode/DatumNode.svc/basic", … }
+​1: Object { Long_Retry_Count: 5, Num_Helpers_Thread: 0, Wsdl_Name: "http://10.36.130.74:5201/WsBridge", … }
+​2: Object { Num_Helpers_Thread: 0, Wsdl_Name: "http://center.tgrad:80/DatumNode/DatumNode.svc/basic", Type_Connect: 3, … }
+​3: Object { Long_Retry_Count: 5, Num_Helpers_Thread: 0, Wsdl_Name: "http://center.tgrad:80/DatumNode/DatumNode.svc/basic", … }
+​4: Object { Num_Helpers_Thread: 0, Wsdl_Name: "http://10.28.88.241:80/CMS_B2B/additional/wservice.nsf/WsHermesAPI/", Type_Connect: 3, … }
+​```
+length: 5
+​
+<prototype>: Array []
+:96
+response :97
+data.length= 5 :99
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
+**Other information:**
+<!-- List any other information that is relevant to your issue. Stack traces, related issues, suggestions on how to fix, Stack Overflow links, forum links, etc. For visual or layout problems, please include images or animated gifs.-->
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Environment**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+* React-admin version: 3.10
+* React version: 17.0.1 ( DISABLE_NEW_JSX_TRANSFORM=true )
+* Type Script : 4.0.3
+* Browser: Firefox 82.0.2
+* Stack trace (in case of a JS error): no  JS error
